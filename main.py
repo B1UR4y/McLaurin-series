@@ -54,6 +54,23 @@ def f9(x, m, n):
         answer += (m_prod * x**i) / factorial(i)
     return answer
 
+def maclaurin_1_minus_x_degree_m(x, m, iterations=5):
+    """
+    Вычисляет приближенное значение (1 + x)^m с использованием разложения в ряд Маклорена
+    :param x: значение, для которого вычисляется (1 + x)^m в пределе (-1, 1)
+    :param m: значение степени
+    :param iterations: количество итераций (по умолчанию 5)
+    """
+    if not (-1 < x < 1) or (abs(m) > iterations):
+        raise ValueError("Значение x должно быть в диапазоне (-1, 1) и модуль m <= 5")
+    result = 1
+    for y in range(1, iterations + 1):
+        m_prod = m
+        for z in range(1, y):
+            m_prod *= (m - z)
+        result += (-1) ** y * (m_prod * x ** y) / factorial(y)
+    return result
+
 
 def menu(n = 5):
     """Меню"""
@@ -67,6 +84,7 @@ def menu(n = 5):
     option (вводится пользователем), 
     x (вводится пользователем), 
     y (вводится пользователем)
+    m (вводится пользователем)
     """
     """Возвращаемое значение: 0"""
     """Исключения:"""
@@ -74,6 +92,7 @@ def menu(n = 5):
     Ввод не является числом
     Ввод превышает граничные значения x
     Ввод больше или равен n
+    Ввод модуля m > 5
     """
     """Пример использования:"""
     """    
@@ -97,7 +116,7 @@ def menu(n = 5):
             option = int(input("Выберите одну из опций:\n"
                          "1 - Функция 3 (cos(x))\n"
                          "2 - Функция 9 ((1 + x)^m)\n"
-                         # "3 - Функция 10\n"
+                         "3 - Функция 10 ((1 - x)^m)\n"
                          "4 - Выход\n"))
         except:
             print("Допустим только ввод целых чисел")
@@ -134,7 +153,13 @@ def menu(n = 5):
                     continue
                 print("Ответ:", f9(x, m, n))
             case 3:
-                pass
+                try:
+                    x = float(input("Введите значение x (в пределах (-1, 1)): "))
+                    m = float(input("Введите значение степени m (модуль степени <= 5): "))
+                    result = maclaurin_1_minus_x_degree_m(x, m)
+                    print(f"Результат (1 - {x})^{m} по формуле Маклорена: {result}")
+                except ValueError as e:
+                    print(e)
             case 4:
                 return 0
             case _:
